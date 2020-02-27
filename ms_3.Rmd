@@ -1,0 +1,38 @@
+---
+title: "ms_3"
+author: "John Mark Ozaeta"
+date: "2/26/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(dplyr)
+library(readxl)
+library(janitor)
+library(readr)
+library(ggplot2)
+
+happiness <- read.csv("raw-data/data.csv")%>%
+  clean_names()%>%
+  rename(country_name = name)
+
+gdpPerCapita <- readxl::read_xls("raw-data/gdp.xls", skip = 3)%>%
+  clean_names()
+
+gdpPerCapita2 <- gdpPerCapita%>%
+  select(country_name, x2018)
+
+master <- happiness%>%
+  full_join(gdpPerCapita2, by = )
+```
+
+
+```{r}
+ggplot(master, aes(x = x2018, y = happiness_score))+
+  geom_point()+
+  scale_x_log10()
+```
+
