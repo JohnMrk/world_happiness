@@ -20,6 +20,15 @@ gun_deaths <- read.csv("raw-data/gun_deaths.csv")%>%
   rename(country_name = name)%>%
   select(country_name, total)
 
+education <- read.csv("raw-data/education.csv")%>%
+  clean_names()%>%
+  rename(country_name = name)
+
+literacy <- read.csv("raw-data/literacy.csv")%>%
+  clean_names()%>%
+  rename(country_name = name)%>%
+  select(-pop2019)
+
 cost_of_living <- read_csv("raw-data/cost_of_living.csv")%>%
   clean_names()%>%
   rename(country_name = name)%>%
@@ -44,6 +53,12 @@ master <- master%>%
 master <- master%>%
   full_join(gun_deaths)%>%
   rename(gun_deaths = total)
+
+master <- master%>%
+  full_join(education)
+
+master <- master%>%
+  full_join(literacy)
 ```
 
 
@@ -57,6 +72,25 @@ ggplot(master, aes(x = cost_of_living_index, y = happiness_score))+
   scale_x_log10()
 
 ggplot(master, aes(x = gun_deaths, y = happiness_score))+
+  geom_point()+
+  scale_x_log10()
+
+ggplot(master, aes(x = total_score, y = happiness_score))+
+  geom_point()
+
+ggplot(master, aes(x = reading_score, y = happiness_score))+
+  geom_point()
+
+ggplot(master, aes(x = math_score, y = happiness_score))+
+  geom_point()
+
+ggplot(master, aes(x = science_score, y = happiness_score))+
+  geom_point()
+
+ggplot(master, aes(x = literacy_rate, y = happiness_score))+
+  geom_point()
+
+ggplot(master, aes(x = x2018, y = total_score))+
   geom_point()+
   scale_x_log10()
 
