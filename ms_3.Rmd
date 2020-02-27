@@ -15,6 +15,16 @@ library(janitor)
 library(readr)
 library(ggplot2)
 
+gun_deaths <- read.csv("raw-data/gun_deaths.csv")%>%
+  clean_names()%>%
+  rename(country_name = name)%>%
+  select(country_name, total)
+
+cost_of_living <- read_csv("raw-data/cost_of_living.csv")%>%
+  clean_names()%>%
+  rename(country_name = name)%>%
+  select(country_name, cost_of_living_index)
+
 happiness <- read.csv("raw-data/data.csv")%>%
   clean_names()%>%
   rename(country_name = name)
@@ -26,7 +36,14 @@ gdpPerCapita2 <- gdpPerCapita%>%
   select(country_name, x2018)
 
 master <- happiness%>%
-  full_join(gdpPerCapita2, by = )
+  full_join(gdpPerCapita2)
+
+master <- master%>%
+  full_join(cost_of_living)
+
+master <- master%>%
+  full_join(gun_deaths)%>%
+  rename(gun_deaths = total)
 ```
 
 
@@ -34,5 +51,14 @@ master <- happiness%>%
 ggplot(master, aes(x = x2018, y = happiness_score))+
   geom_point()+
   scale_x_log10()
+
+ggplot(master, aes(x = cost_of_living_index, y = happiness_score))+
+  geom_point()+
+  scale_x_log10()
+
+ggplot(master, aes(x = gun_deaths, y = happiness_score))+
+  geom_point()+
+  scale_x_log10()
+
 ```
 
