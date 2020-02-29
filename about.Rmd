@@ -1,0 +1,23 @@
+---
+title: "About"
+author: "John Mark Ozaeta"
+date: "2/28/2020"
+output: html_document
+---
+
+About this project
+
+The purpose of this project is to model happiness around the world. By comparing various 
+values to a country's happiness I hope to give the reader a deeper understadning of what 
+drives happiness around the world. I hope to provide a novel realization about the state
+of happiness in the world to my reader. I hope that I may allow my reader to question pre-
+conceptions they held about happiness today. 
+
+About the Data
+
+I have compiled my data from several sources. The primary resource I have used thus far is the World
+Population Review, a website that tracks data on various topics about each country. I also used data
+from the World Bank to get data on urbanization. The most important part of my data(happiness scores),
+is compiled by the World Happiness Report.
+
+link to github repo : https://github.com/JohnMrk/Ms_3.git
