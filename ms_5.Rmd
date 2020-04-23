@@ -1,0 +1,44 @@
+---
+title: "Beautiful Plot"
+author: "John Mark Ozaeta"
+date: "4/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(readxl)
+library(janitor)
+library(readr)
+library(ggplot2)
+library(ggthemes)
+
+options(scipen = 999)
+
+gdpPerCapita <- readxl::read_xls("raw-data/gdp.xls", skip = 3)%>%
+  clean_names()
+
+happiness <- read.csv("raw-data/data.csv")%>%
+  clean_names()%>%
+  rename(country_name = name)
+
+gdpPerCapita2 <- gdpPerCapita%>%
+  select(country_name, country_code, x2018)
+
+master <- happiness%>%
+  full_join(gdpPerCapita2)
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(master, aes(x= x2018, y = happiness_score))+
+  geom_point()+
+  scale_x_log10()+
+  theme_fivethirtyeight()+
+  labs(title = "Happiness as a Product of GDP per Capita", x = "GDP per Capita", y = "Happiness Score")
+
+
+```
+

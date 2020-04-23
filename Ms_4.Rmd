@@ -1,0 +1,29 @@
+---
+title: "ms_4"
+author: "John Mark Ozaeta"
+date: "3/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+So far in my project I have colllected data on happiness for 145 countries. I have joined this data with gdp per capita, education scores, rate of gun deaths, literacy rates, and urbanization rates. I got my happiness data from the World Happiness report which surveys countries around the world on how they think they rank on a scale fomr 1-10 in their own life. This scale lists 1 as the worst possible life for themselves and 10 as the best. It may be more accurate to portray this as life satisfaction. I'll decide on that later in my project. 
+
+I got my eduaction data from PISA a test that the OECD adminsters every year to test a country's educational proficiency. I'm going to use the country code indicator from my GDP per capita data to join this data set. First, I'll need to clean the data to only give me relevant data from each country. 
+I got my urbanization data from the worldbank. This was easy to join to the master data table I'm creating to give me data on each country. 
+
+I got my cost of living data from a csv created by World Population Overview of Numbeo's Cost of Living Index. 
+
+I also got my GDP per capita data from the World Bank. 
+
+I got my gun deaths data from the 2017 data of the Global Burden of Disease study done by The Institute for Health Metrics and Evaluation at the University of Washington. I will join this data by country name. I will also have to clean this data because I got multiple values per country that I will need to sort out. That is because the causes of death are listed seperatley for many countries. By adding all those values I should get the overall deaths caused by firearms. I may choose not to do this and only take homicides.
+
+I got my median income data from the center for global development. It is in PPP so it may be a more reflective measure of how countries are actually doing. 
+
+I got my average wages from the OECD.
+
+Link to my repo containing my data : https://github.com/JohnMrk/Ms_3.git
