@@ -17,7 +17,6 @@ library(ggplot2)
 
 #get inequality data. May be able to explain fluctuations in happiness. also compare difference between gdp per capita and median income.
 
-#Find dominant religion in each country plot mean happiness or by color by religion.
 
 #Find freedom index, free press. Average number of children
 
@@ -53,10 +52,21 @@ urbanization <- readxl::read_xls("raw-data/urbanization.xls", skip =3)%>%
 gdpPerCapita2 <- gdpPerCapita%>%
   select(country_name, country_code, x2018)
 
+
+#chrstgenpct, judgenpct, islmgenpct, budgenpct, zorogenpct, hindgenpct, #sikhgenpct, shntgenpct, )
+
+religion <- readxl::read_xlsx("raw-data/Religious_Composition_by_Country_2010-2050.xlsx", sheet =   "rounded_percentage")%>%
+  filter(Year == 2010)%>%
+  select(Country, Unaffiliated)%>%
+  mutate(nonreligpct = as.numeric(Unaffiliated))%>%
+  mutate(religpct = 100 - nonreligpct, country_name = Country)%>%
+  select(country_name, religpct, nonreligpct)
+
+
+
 master1 <- happiness%>%
   full_join(gdpPerCapita2)
 
-master1
 
 cleaned <- read_csv("raw-data/troubleshoot1.csv")
 
@@ -67,56 +77,38 @@ cleaned1 <- cleaned%>%
   select(country_name.x, country_code, x2018)%>%
   rename(country_name = country_name.x)
 
-
-
 master <- cleaned%>%
   filter(!is.na(x2018))%>%
   full_join(cleaned1)%>%
   filter(!is.na(happiness_rank))
 
-
-
 master <- master%>%
   left_join(cost_of_living, by = "country_name")
 
-view(master)
+
 
 master <- master%>%
   left_join(literacy, by = "country_name")
 
-
-
-view(master)
+master <- master%>%
+  full_join(religion)
 
 
 ```
 
+
+
+
+
+
+
+
 ```{r}
-ggplot(master, aes(x = x2018, y = happiness_score))+
-  geom_point()+
-  scale_x_log10()
-
-ggplot(master, aes(x = cost_of_living_index, y = happiness_score))+
-  geom_point()+
-  scale_x_log10()
-
-ggplot(master, aes(x = gun_deaths, y = happiness_score))+
-  geom_point()+
-  scale_x_log10()
-
-ggplot(master, aes(x = literacy_rate, y = happiness_score))+
+ggplot(master, aes(x = religpct, y = happiness_score))+
   geom_point()
 
-ggplot(master, aes(x = x2018, y = total_score))+
-  geom_point()+
-  scale_x_log10()
-
-ggplot(master, aes(x = urbanization, y = happiness_score))+
-  geom_point()
-
-ggplot(master, aes(x = x2018, y = urbanization))+
-  geom_point()+
-  scale_x_log10()
-
+master%>%
+  filter(!is.na(religpct))%>%
+  summarize(correlation = cor(religpct, happiness_score, method = "glm"))
 ```
 
