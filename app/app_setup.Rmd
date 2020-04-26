@@ -1,7 +1,7 @@
 ---
-title: "ms_3"
+title: "app_setup"
 author: "John Mark Ozaeta"
-date: "2/26/2020"
+date: "4/26/2020"
 output: html_document
 ---
 
@@ -114,50 +114,3 @@ master <- master%>%
 
 master <- master%>%
   left_join(gun_deaths, by = "country_name")
-
-view(master)
-```
-
-
-
-
-
-
-
-
-```{r}
-ggplot(master, aes(x = pf_score, y = happiness_score))+
-  geom_point()+
-  geom_smooth(method = "lm")
-
-ggplot(master, aes(x = ef_score, y = happiness_score))+
-  geom_point()+
-  geom_smooth(method = "lm")
-
-ggplot(master, aes(x = hf_score, y = happiness_score, color = region))+
-  geom_point()+
-facet_wrap("region")+
-  geom_smooth(method = "lm")
-
-ggplot(master, aes(x =x2018, y = hf_score, color = region))+
-  geom_point()+
-  scale_x_log10()+
-  geom_smooth(method = "lm")
-
-ggplot(master, aes(x = gini_index, y = happiness_score))+
-  geom_point()+
-  geom_smooth(method = "lm")
-
-ggplot(master, aes(x = religpct, y = happiness_score))+
-   geom_point()+
-  geom_smooth(method = "lm")
-
-ggplot(master, aes(x = x2018, y = happiness_score, color = region))+
-  geom_point()+
-  scale_x_log10()
-
-ggplot(master, aes(x = total_deaths, y = happiness_score))+
-  geom_point()+
-  scale_x_log10()
-```
-
