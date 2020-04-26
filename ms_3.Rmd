@@ -27,11 +27,6 @@ gun_deaths <- read.csv("raw-data/gun_deaths2.csv")%>%
 education <- read.csv("raw-data/education2.csv")%>%
   clean_names()
 
-literacy <- read.csv("raw-data/literacy.csv")%>%
-  clean_names()%>%
-  rename(country_name = name)%>%
-  select(-pop2019)
-
 cost_of_living <- read_csv("raw-data/cost_of_living.csv")%>%
   clean_names()%>%
   rename(country_name = name)%>%
@@ -51,6 +46,28 @@ urbanization <- readxl::read_xls("raw-data/urbanization.xls", skip =3)%>%
 
 gdpPerCapita2 <- gdpPerCapita%>%
   select(country_name, country_code, x2018)
+
+HFI <- read.csv("raw-data/hfi_2018.csv")%>%
+  clean_names()%>%
+  mutate(myyear = max(year))%>%
+  filter(year == myyear)%>%
+  select(iso_code, region, hf_score)%>%
+  rename(country_code = iso_code)
+
+view(HFI)
+
+gini <- read.csv("raw-data/gini.csv")%>%
+  clean_names()
+  
+clean_gini <- gini%>%
+  group_by(country_code)%>%
+  mutate(myyear = max(year))%>%
+  filter(year == myyear)%>%
+  select(country_code, value)%>%
+  rename(gini_index = value)
+
+view(clean_gini)
+
 
 
 #chrstgenpct, judgenpct, islmgenpct, budgenpct, zorogenpct, hindgenpct, #sikhgenpct, shntgenpct, )
@@ -85,13 +102,11 @@ master <- cleaned%>%
 master <- master%>%
   left_join(cost_of_living, by = "country_name")
 
-
+master <- master%>%
+  left_join(HFI, by = "country_code")
 
 master <- master%>%
-  left_join(literacy, by = "country_name")
-
-master <- master%>%
-  full_join(religion)
+  left_join(clean_gini, by = "country_code")
 
 
 ```
@@ -104,11 +119,14 @@ master <- master%>%
 
 
 ```{r}
-ggplot(master, aes(x = religpct, y = happiness_score))+
+ggplot(master, aes(x = hf_score, y = happiness_score))+
   geom_point()
 
-master%>%
-  filter(!is.na(religpct))%>%
-  summarize(correlation = cor(religpct, happiness_score, method = "glm"))
+ggplot(master, aes(x =x2018, y = hf_score))+
+  geom_point()+
+  scale_x_log10()
+
+ggplot(master, aes(x = gini_index, y = happiness_score))+
+  geom_point()
 ```
 
