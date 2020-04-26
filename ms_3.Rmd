@@ -51,10 +51,9 @@ HFI <- read.csv("raw-data/hfi_2018.csv")%>%
   clean_names()%>%
   mutate(myyear = max(year))%>%
   filter(year == myyear)%>%
-  select(iso_code, region, hf_score)%>%
+  select(iso_code, region, hf_score, pf_score, ef_score)%>%
   rename(country_code = iso_code)
 
-view(HFI)
 
 gini <- read.csv("raw-data/gini.csv")%>%
   clean_names()
@@ -66,7 +65,6 @@ clean_gini <- gini%>%
   select(country_code, value)%>%
   rename(gini_index = value)
 
-view(clean_gini)
 
 
 
@@ -119,14 +117,25 @@ master <- master%>%
 
 
 ```{r}
+ggplot(master, aes(x = pf_score, y = happiness_score))+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+ggplot(master, aes(x = ef_score, y = happiness_score))+
+  geom_point()+
+  geom_smooth(method = "lm")
+
 ggplot(master, aes(x = hf_score, y = happiness_score))+
-  geom_point()
+  geom_point()+
+  geom_smooth(method = "lm")
 
 ggplot(master, aes(x =x2018, y = hf_score))+
   geom_point()+
-  scale_x_log10()
+  scale_x_log10()+
+  geom_smooth(method = "lm")
 
 ggplot(master, aes(x = gini_index, y = happiness_score))+
-  geom_point()
+  geom_point()+
+  geom_smooth(method = "lm")
 ```
 
