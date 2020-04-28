@@ -74,7 +74,13 @@ fertility_rate <- read.csv("raw-data/fertility.csv", skip =3)%>%
   clean_names()%>%
   select(country_code, x2018)%>%
   rename(fertility_rate = x2018)
-view(fertility_rate)  
+
+life_expectancy <- read.csv("raw-data/expectancy.csv", skip =3)%>%
+  clean_names()%>%
+  select(country_code, x2018)%>%
+  rename(life_expectancy = x2018)
+
+view(life_expectancy)  
 #chrstgenpct, judgenpct, islmgenpct, budgenpct, zorogenpct, hindgenpct, #sikhgenpct, shntgenpct, )
 
 religion <- readxl::read_xlsx("raw-data/Religious_Composition_by_Country_2010-2050.xlsx", sheet =   "rounded_percentage")%>%
@@ -121,6 +127,9 @@ master <- master%>%
 
 master <- master%>%
   left_join(fertility_rate, by = "country_code")
+
+master <- master%>%
+  left_join(life_expectancy, by = "country_code")
 
 view(master)
 ```
@@ -171,9 +180,12 @@ ggplot(master, aes(x = fertility_rate, y = happiness_score))+
   geom_point()+
   geom_smooth(method ="lm")
 
-ggplot(master, aes(x = gdpPC, y = fertility_rate))+
+ggplot(master, aes(x = life_expectancy, y = happiness_score))+
   geom_point()
 
+ggplot(master, aes(x = x2018, y = life_expectancy))+
+  geom_point()+
+  scale_x_log10()
 
 ```
 
