@@ -14,7 +14,7 @@ library(readxl)
 library(janitor)
 library(readr)
 library(ggplot2)
-source("app/app_setup.R")
+source("app_setup.R")
 
 # User interface ----
 
@@ -31,8 +31,14 @@ ui <- navbarPage(
                              "var",
                              "Choose variable to explore", 
                              choices = c("GDP Per Capita" , "Human Freedom Index" , "Gun Violence", "Wealth Inequality(Gini Index)" )
-                         )),
-                     mainPanel(plotOutput("line_plot")))
+                         ),
+                         br(),
+                        selectInput(
+                            "wrap",
+                            "Facet Wrap by Region?",
+                            choices = c("Yes", "No")
+                        )),
+                mainPanel(plotOutput("line_plot")))
              )),
     tabPanel("Discussion",
              titlePanel("Discussion Title"),
@@ -51,16 +57,20 @@ server <- function(input, output) {
     output$line_plot <- renderPlot({
         # Generate type based on input$plot_type from ui
         data <- switch(input$var, 
-                       "GDP Per Capita" = master$x2018,
+                       "GDP Per Capita" = master$gdpPC,
                        "Human Freedom Index" = master$hf_score,
-                       "Gun Violence" = master$total_deaths,
+                       "Gun Violence" = master$log_td,
                        "Wealth Inequality(Gini Index)"  = master$gini_index)
-        
+        wrap <- switch(input$wrap, 
+                           "Yes" = "region",
+                           "No" = "country_name")
         # Draw the histogram with the specified number of bins
         
-       ggplot(master, aes(x = data, y = happiness_score)) +geom_point()
+       ggplot(master, aes(x = data, y = happiness_score, color = region)) +geom_point() + facet_wrap(wrap)+
+           labs(x = input$var, y = "Happiness Score from 0-10")
     })
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+

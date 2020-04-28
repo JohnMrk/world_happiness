@@ -93,4 +93,6 @@ master <- master%>%
 master <- master%>%
   left_join(gun_deaths, by = "country_name")
 
-
+master <- master%>%
+  mutate(gdpPC = log10(x2018), log_td = log10(total_deaths))
+         

@@ -70,7 +70,11 @@ clean_gini <- gini%>%
   rename(gini_index = value)
 
 
-
+fertility_rate <- read.csv("raw-data/fertility.csv", skip =3)%>%
+  clean_names()%>%
+  select(country_code, x2018)%>%
+  rename(fertility_rate = x2018)
+view(fertility_rate)  
 #chrstgenpct, judgenpct, islmgenpct, budgenpct, zorogenpct, hindgenpct, #sikhgenpct, shntgenpct, )
 
 religion <- readxl::read_xlsx("raw-data/Religious_Composition_by_Country_2010-2050.xlsx", sheet =   "rounded_percentage")%>%
@@ -114,6 +118,9 @@ master <- master%>%
 
 master <- master%>%
   left_join(gun_deaths, by = "country_name")
+
+master <- master%>%
+  left_join(fertility_rate, by = "country_code")
 
 view(master)
 ```
@@ -159,5 +166,14 @@ ggplot(master, aes(x = x2018, y = happiness_score, color = region))+
 ggplot(master, aes(x = total_deaths, y = happiness_score))+
   geom_point()+
   scale_x_log10()
+
+ggplot(master, aes(x = fertility_rate, y = happiness_score))+
+  geom_point()+
+  geom_smooth(method ="lm")
+
+ggplot(master, aes(x = gdpPC, y = fertility_rate))+
+  geom_point()
+
+
 ```
 
