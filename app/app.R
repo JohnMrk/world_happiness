@@ -15,6 +15,7 @@ library(janitor)
 library(readr)
 library(ggplot2)
 library(rsconnect)
+library(plotly)
 source("app_setup.R")
 
 # User interface ----
@@ -31,17 +32,27 @@ ui <- navbarPage(
                          selectInput(
                              "var",
                              "Choose variable to explore", 
-                             choices = c("GDP Per Capita(log10)" , "Human Freedom Index" , "Gun Violence(log10)", 
-                                         "Wealth Inequality(Gini Index)", "Life Expectancy", "Fertility Rate" )
+                             choices = c("GDP Per Capita(log10)" , "Human Freedom Index" , "Gun Deaths per 100,000(log10)", 
+                                         "Wealth Inequality(Gini Index)", "Life Expectancy", "Fertility Rate" ),
+                             selected = "GDP Per Capita(log10)"
                          ),
                          br(),
                         selectInput(
                             "wrap",
                             "Facet Wrap by Region?",
-                            choices = c("Yes", "No")
+                            choices = c("Yes", "No"),
+                            selected = "No"
+                        
                         ),
-                        p("Explore the various factors that affect(or don't affect) happiness in various countries around the world.")),
-                mainPanel(plotOutput("line_plot")))
+                        br(),
+                        selectInput(
+                          "GDPcompare",
+                          "Size by GDP per Capita?",
+                          choices = c("Yes","No"),
+                          selected = "No"
+                        ),
+                        p("Explore the various factors that affect(or don't affect) happiness in various countries around the world. Hover over a data point for a deepr look!")),
+                mainPanel(plotlyOutput("line_plot")))
              )),
     tabPanel("Quantifying Happiness",
              titlePanel("Data on Happiness"),
@@ -70,29 +81,37 @@ ui <- navbarPage(
                suggest that the biggest reason some places are happier than others, even with the same material resources, may come from cultural differences. 
                These would require further examination that I cannot yet provide as an amateur data scientist.."),
              h3("About Me"),
-             p("My name is John Mark Ozaeta and I study Economics. 
+             p("My name is John Mark Ozaeta, I am a first year at Harvard University. I plan to pursue a concentration in Economics. 
              You can reach me at jozaeta@college.harvard.edu.")))
   
-# Define server logic required to draw a histogram
+
 server <- function(input, output) {
-    output$line_plot <- renderPlot({
-        # Generate type based on input$plot_type from ui
-        data <- switch(input$var, 
+    output$line_plot <- renderPlotly({
+      
+        Name_of_Country <- master$country_name
+        
+        Happiness_Score <- master$happiness_score
+      
+        x_axis <- switch(input$var, 
                        "GDP Per Capita(log10)" = master$gdpPC,
                        "Human Freedom Index" = master$hf_score,
-                       "Gun Violence(log10)" = master$log_td,
+                       "Gun Deaths per 100,000(log10)" = master$log_td,
                        "Wealth Inequality(Gini Index)"  = master$gini_index,
                        "Life Expectancy" = master$life_expectancy,
                        "Fertility Rate" = master$fertility_rate)
         wrap <- switch(input$wrap, 
-                           "Yes" = ggplot(master, aes(x = data, y = happiness_score, color = region)) 
-                       + geom_point() + facet_wrap("region"),
-                           "No" = ggplot(master, aes(x = data, y = happiness_score, color = region))
-                       + geom_point())
-        # Draw the histogram with the specified number of bins
+                           "Yes" = "region",
+                           "No" = NULL)
+        GDPcompare <- switch(input$GDPcompare,
+                             "Yes" = master$gdpPC,
+                             "No" = NULL)
         
-       wrap +
-           labs(x = input$var, y = "Happiness Score from 0-10", title = paste("Effect of", input$var, "on Happiness Around the World", sep = " ")) + theme_classic()
+        plot <- ggplot(master, aes(x = x_axis, y = Happiness_Score, color = region, size = GDPcompare, label = Name_of_Country)) + geom_point() +
+          facet_wrap(wrap) +
+           labs(x = input$var, y = "Happiness Score from 0-10", title = paste("Effect of", input$var, "on Happiness Around the World", sep = " ")) + 
+          theme_minimal()
+        
+        ggplotly(p = plot, tooltip = c("label", "x","y"))
     })
 }
 

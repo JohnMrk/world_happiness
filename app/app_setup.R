@@ -57,7 +57,7 @@ clean_gini <- gini%>%
 
 
 
-#chrstgenpct, judgenpct, islmgenpct, budgenpct, zorogenpct, hindgenpct, #sikhgenpct, shntgenpct, )
+
 
 religion <- readxl::read_xlsx("raw-data/Religious_Composition_by_Country_2010-2050.xlsx", sheet =   "rounded_percentage")%>%
   filter(Year == 2010)%>%
@@ -120,3 +120,10 @@ master <- master%>%
 master <- master%>%
   left_join(life_expectancy, by = "country_code")
        
+master$region[39] <- "Caucasus & Central Asia"
+master$region[78] <- "Caucasus & Central Asia"
+master$region[98] <- "Sub-Saharan Africa"
+master$region[123] <- "Sub-Saharan Africa"
+master$region[133] <- "Middle East & North Africa"
+
+
