@@ -135,7 +135,8 @@ view(master)
 ```
 
 
-
+ggplot(master, aes(x = data, y = happiness_score)) +geom_point() + wrap +
+           labs(x = input$var, y = "Happiness Score from 0-10") + theme_classic()
 
 
 
